@@ -38,8 +38,8 @@ CREATE TABLE IF NOT EXISTS bets (
     CONSTRAINT valid_bet_type CHECK (bet_type IN ('h2h', 'spreads', 'totals')),
     CONSTRAINT valid_status CHECK (status IN ('pending', 'won', 'lost', 'cancelled', 'pushed')),
     CONSTRAINT valid_result CHECK (result IS NULL OR result IN ('won', 'lost', 'cancelled', 'pushed')),
-    CONSTRAINT positive_stake CHECK (stake > 0),
-    CONSTRAINT positive_odds CHECK (odds > 0)
+    CONSTRAINT positive_stake CHECK (stake > 0)
+    -- Removed invalid positive_odds constraint for American odds support
 );
 
 -- Transactions table
@@ -77,8 +77,10 @@ END;
 $$ language 'plpgsql';
 
 -- Triggers to automatically update updated_at
+DROP TRIGGER IF EXISTS update_users_updated_at ON users;
 CREATE TRIGGER update_users_updated_at BEFORE UPDATE ON users
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_bets_updated_at ON bets;
 CREATE TRIGGER update_bets_updated_at BEFORE UPDATE ON bets
     FOR EACH ROW EXECUTE FUNCTION update_updated_at_column();
