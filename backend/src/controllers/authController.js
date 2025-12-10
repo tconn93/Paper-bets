@@ -1,5 +1,6 @@
 import { body, validationResult } from "express-validator";
 import { AuthService } from "../services/authService.js";
+import { SettlementService } from "../services/settlementService.js";
 
 
 export class AuthController {
@@ -74,6 +75,19 @@ export class AuthController {
       };
 
       const result = await AuthService.login(input);
+
+      // Trigger settlement asynchronously (non-blocking)
+      SettlementService.processSettlements()
+        .then((settlementResult) => {
+          if (settlementResult.settledCount > 0) {
+            console.log(
+              `Auto-settlement on login: ${settlementResult.settledCount} bets settled`
+            );
+          }
+        })
+        .catch((error) => {
+          console.error("Auto-settlement error on login:", error);
+        });
 
       res.status(200).json({
         success: true,

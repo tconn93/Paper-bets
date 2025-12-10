@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/auth.js";
 import oddsRoutes from "./routes/odds.js";
 import betsRoutes from "./routes/bets.js";
+import settlementRoutes from "./routes/settlement.js";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler.js";
 import pool from "./database/db.js";
 
@@ -43,6 +44,7 @@ app.get("/health", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/odds", oddsRoutes);
 app.use("/api/bets", betsRoutes);
+app.use("/api/settlement", settlementRoutes);
 
 // Root endpoint
 app.get("/", (req, res) => {

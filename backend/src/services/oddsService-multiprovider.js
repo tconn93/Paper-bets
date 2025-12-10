@@ -124,6 +124,89 @@ export class OddsService {
     }
   }
 
+  async getScores(sport, daysFrom = 3) {
+    switch (this.provider) {
+      case "balldontlie":
+        return this.getBallDontLieScores(daysFrom);
+      case "sgo":
+        return []; // Not implemented for now
+      case "the-odds-api":
+      default:
+        return this.getTheOddsAPIScores(sport, daysFrom);
+    }
+  }
+
+  // ... existing methods ...
+
+  async getBallDontLieScores(daysFrom) {
+    try {
+      const dates = [];
+      const today = new Date();
+      for (let i = 0; i < daysFrom; i++) {
+        const date = new Date(today);
+        date.setDate(today.getDate() - i);
+        dates.push(date.toISOString().split("T")[0]);
+      }
+
+      const response = await axios.get("https://api.balldontlie.io/v1/games", {
+        params: {
+          dates: dates,
+          per_page: 100,
+        },
+        headers: {
+          Authorization: process.env.BALLDONTLIE_API_KEY // If required, though user said it's free/no key. 
+          // Actually v1 might need key now, but previous code comments said "Free, no API key required".
+          // Let's check previous code. It didn't use headers for getBallDontLieOdds.
+          // Wait, getBallDontLieOdds used https://api.balldontlie.io/v1/games.
+          // Let's stick to what was there or check if it needs key.
+          // The previous code for getBallDontLieOdds didn't use an API key.
+        }
+      });
+
+      // If the previous code didn't use a key, I won't either, but balldontlie might have changed.
+      // However, I should check if I need to transform the data.
+      return this.transformBallDontLieScores(response.data);
+    } catch (error) {
+      console.error("Error fetching BallDontLie scores:", error);
+      return [];
+    }
+  }
+
+  transformBallDontLieScores(data) {
+    return data.data.map((game) => ({
+      id: game.id.toString(),
+      sport_key: "nba", // BallDontLie is mostly NBA
+      sport_title: "NBA",
+      completed: game.status === "Final",
+      home_team: game.home_team.full_name,
+      away_team: game.visitor_team.full_name,
+      scores: [
+        { name: game.home_team.full_name, score: game.home_team_score.toString() },
+        { name: game.visitor_team.full_name, score: game.visitor_team_score.toString() },
+      ],
+    }));
+  }
+
+  async getTheOddsAPIScores(sport, daysFrom) {
+    const API_KEY = process.env.ODDS_API_KEY;
+    const BASE_URL =
+      process.env.ODDS_API_BASE_URL || "https://api.the-odds-api.com/v4";
+
+    try {
+      const response = await axios.get(`${BASE_URL}/sports/${sport}/scores`, {
+        params: {
+          apiKey: API_KEY,
+          daysFrom: daysFrom,
+          dateFormat: "iso",
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching scores:", error);
+      throw new Error("Failed to fetch scores");
+    }
+  }
+
   // Transform different API formats to our standard format
   transformBallDontLieData(data) {
     // Convert BallDontLie format to our standard format

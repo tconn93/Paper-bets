@@ -1,1 +1,38 @@
-{"name":"paper-bets-backend","version":"1.0.0","description":"Backend API for Paper Bets sports betting application","main":"src/server.js","type":"module","scripts":{"build":"echo 'No build step needed'","start":"node src/server.js","dev":"nodemon --watch src --ext js --exec \"node src/server.js\"","migrate":"node src/database/migrate.js","lint":"eslint . --ext .js","format":"prettier --write \"src/**/*.js\""},"keywords":["sports-betting","express","javascript","postgresql"],"author":"","license":"ISC","dependencies":{"express":"^4.18.2","cors":"^2.8.5","dotenv":"^16.3.1","bcryptjs":"^2.4.3","jsonwebtoken":"^9.0.2","pg":"^8.11.3","axios":"^1.6.2","express-validator":"^7.0.1"},"devDependencies":{"nodemon":"^3.0.2","eslint":"^8.56.0","prettier":"^3.1.1"}}
+{
+    "name": "paper-bets-backend",
+    "version": "1.0.0",
+    "description": "Backend API for Paper Bets sports betting application",
+    "main": "src/server.js",
+    "scripts": {
+        "build": "echo 'No build step needed'",
+        "start": "node src/server.js",
+        "dev": "nodemon --watch src --ext js --exec \"node src/server.js\"",
+        "migrate": "node src/database/migrate.js",
+        "lint": "eslint . --ext .js",
+        "format": "prettier --write \"src/**/*.js\""
+    },
+    "keywords": [
+        "sports-betting",
+        "express",
+        "javascript",
+        "postgresql"
+    ],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "axios": "^1.6.2",
+        "bcryptjs": "^2.4.3",
+        "cheerio": "^1.1.2",
+        "cors": "^2.8.5",
+        "dotenv": "^16.3.1",
+        "express": "^4.18.2",
+        "express-validator": "^7.0.1",
+        "jsonwebtoken": "^9.0.2",
+        "pg": "^8.11.3"
+    },
+    "devDependencies": {
+        "eslint": "^8.56.0",
+        "nodemon": "^3.0.2",
+        "prettier": "^3.1.1"
+    }
+}

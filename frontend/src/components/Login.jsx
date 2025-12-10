@@ -18,7 +18,7 @@ export const Login = () => {
      localStorage.setItem('token',result.token)
      localStorage.setItem('user',result.user)
      setTimeout(()=>{
-//  navigate('/dashboard');
+ navigate('/dashboard');
      },5000) 
     
     } catch (err) {

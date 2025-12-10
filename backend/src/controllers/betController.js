@@ -1,5 +1,6 @@
 import { body, validationResult } from "express-validator";
 import { BetService } from "../services/betService.js";
+import { SettlementService } from "../services/settlementService.js";
 import { AppError } from "../errors.js";
 
 export class BetController {
@@ -75,6 +76,19 @@ export class BetController {
         });
         return;
       }
+
+      // Trigger settlement asynchronously (non-blocking)
+      SettlementService.processSettlements()
+        .then((settlementResult) => {
+          if (settlementResult.settledCount > 0) {
+            console.log(
+              `Auto-settlement on view bets: ${settlementResult.settledCount} bets settled`
+            );
+          }
+        })
+        .catch((error) => {
+          console.error("Auto-settlement error on view bets:", error);
+        });
 
       const { status } = req.query;
       const bets = await BetService.getUserBets(req.user.id, status);
